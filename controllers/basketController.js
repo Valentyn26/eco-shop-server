@@ -5,16 +5,18 @@ class BasketController {
     async addProduct(req, res) {
         const { basketId, productId, count } = req.body;
 
+        const basketProduct = await BasketProduct.create({ basketId, productId, count });
+        return res.json(basketProduct);
+    }
+
+    async changeProduct(req, res) {
+        const { basketId, productId, count } = req.body;
+
         const alreadyIs = await BasketProduct.findOne({ where: { basketId, productId } });
 
-        if (!alreadyIs) {
-            const basketProduct = await BasketProduct.create({ basketId, productId, count });
-            return res.json(basketProduct);
-        } else {
-            alreadyIs.count = count;
-            await alreadyIs.save();
-            return res.json(alreadyIs);
-        }
+        alreadyIs.count = count;
+        await alreadyIs.save();
+        return res.json(alreadyIs);
     }
 
     async getAll(req, res) {
